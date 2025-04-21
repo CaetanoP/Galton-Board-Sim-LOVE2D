@@ -19,16 +19,19 @@ function Bin:new(world, x, y, width, height, wallThickness, options)
 	self.leftShape = love.physics.newRectangleShape(self.thickness, height)
 	self.leftFixture = love.physics.newFixture(self.left, self.leftShape)
 	self.leftFixture:setRestitution(0)
+	self.left:setAwake(false)
 	-- Right wall
 	self.right = love.physics.newBody(world, x + width - self.thickness, y - height / 2, "static")
 	self.rightShape = love.physics.newRectangleShape(self.thickness, height)
 	self.rightFixture = love.physics.newFixture(self.right, self.rightShape)
 	self.rightFixture:setRestitution(0)
+	self.right:setAwake(false)
 	-- Bottom
 	self.bottom = love.physics.newBody(world, x + width / 2 - self.thickness / 2, y, "static")
 	self.bottomShape = love.physics.newRectangleShape(width - self.thickness * 2, self.thickness)
 	self.bottomFixture = love.physics.newFixture(self.bottom, self.bottomShape)
 	self.bottomFixture:setRestitution(0)
+	self.bottom:setAwake(false)
 	return self
 end
 
@@ -74,4 +77,5 @@ function Bin:CountBallsInside(balls)
 		end
 	end
 end
+
 return Bin
