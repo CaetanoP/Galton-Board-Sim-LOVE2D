@@ -76,6 +76,7 @@ function Bin:CountBallsInside(balls)
 			end
 		end
 	end
+	return self.count
 end
 
 return Bin

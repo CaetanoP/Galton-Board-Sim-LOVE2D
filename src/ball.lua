@@ -79,7 +79,7 @@ end
 function Ball:onBinEnter()
 	self.body:setGravityScale(0) -- disable gravity
 	self.body:setLinearVelocity(0, 0)
-	self.body:applyLinearImpulse(0, 0.5)
+	self.body:applyLinearImpulse(0, 7)
 	self.fixture:setRestitution(0)
 
 	self.insideBin = true

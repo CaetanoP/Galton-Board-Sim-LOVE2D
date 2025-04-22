@@ -14,7 +14,7 @@ function Pin:new(world, x, y, radius, options)
 	self.fixture = love.physics.newFixture(self.body, self.shape)
 
 	self.fixture:setFriction(opts.friction or 0.3)
-	self.fixture:setRestitution(opts.bounciness or 0.4)
+	self.fixture:setRestitution(opts.bounciness or 0.5)
 
 	return self
 end

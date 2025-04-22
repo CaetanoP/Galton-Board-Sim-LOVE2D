@@ -7,7 +7,7 @@ local balls = {}
 local pins = {}
 local bins = {}
 local world
-
+local gameRunning = true
 -- === Constants ===
 local BALL_LIMIT = 900
 local BALL_SPAWN_INTERVAL = 0.05
@@ -33,7 +33,9 @@ end
 
 -- === UPDATE ===
 function love.update(dt)
-	world:update(dt)
+	if gameRunning then
+		world:update(dt) -- Update physics world
+	end
 
 	for _, ball in ipairs(balls) do
 		if ball.alive then
@@ -45,19 +47,15 @@ function love.update(dt)
 	end
 
 	-- Spawn a ball every interval
-	if love.timer.getTime() - lastSpawnTime > BALL_SPAWN_INTERVAL and #balls < BALL_LIMIT then
-		BallSpawn()
+	if love.timer.getTime() - lastSpawnTime > BALL_SPAWN_INTERVAL and #balls_drawn < BALL_LIMIT then
+		if gameRunning then
+			BallSpawn()
+		end
 		lastSpawnTime = love.timer.getTime()
-	end
-
-	-- Press R to reset simulation
-	if love.keyboard.isDown("r") then
-		world:destroy()
-		love.load()
 	end
 end
 
--- === DRAW ===
+-- r== DRAW ===
 function love.draw()
 	for _, ball in ipairs(balls_drawn) do
 		ball:draw()
@@ -65,10 +63,6 @@ function love.draw()
 
 	for _, pin in ipairs(pins) do
 		pin:draw()
-	end
-
-	for _, bin in ipairs(bins) do
-		bin:CountBallsInside(balls)
 	end
 
 	-- Display FPS and Ball Count
@@ -80,6 +74,16 @@ end
 function love.keypressed(key)
 	if key == "s" then
 		SaveBinDataToFile()
+	end
+	if key == "q" then
+		love.event.quit()
+	end
+	if key == "p" then
+		gameRunning = not gameRunning
+	end
+	if key == "r" then
+		world:destroy()
+		love.load()
 	end
 end
 
@@ -129,16 +133,17 @@ function GenerateBins()
 
 	for i = 0, binCount - 1 do
 		local x = i * binWidth
-		table.insert(bins, Bin:new(world, x, binY, binWidth, binHeight, 2))
+		table.insert(bins, Bin:new(world, x, binY, binWidth, binHeight, 1.5))
 	end
 end
 
 -- === SAVE DATA TO FILE ===
 function SaveBinDataToFile()
 	local output = "Bin Index\tBall Count\n"
+	-- Count balls in each bin
 
 	for i, bin in ipairs(bins) do
-		output = output .. string.format("%d\t%d\n", i, bin.count or 0)
+		output = output .. string.format("%d\t%d\n", i, bin:CountBallsInside(balls_drawn) or 0)
 	end
 
 	local success, err = love.filesystem.write("galton_data.txt", output)
